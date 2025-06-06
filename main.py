@@ -2,7 +2,7 @@ import sys
 from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import QMessageBox, QTableWidgetItem, QSpinBox,QCheckBox, QMainWindow, QApplication, QDialog, QPushButton
 from models import * 
-
+from functions import *
 
 
 db = SqliteDatabase('db/restaurnt.db')
@@ -159,7 +159,7 @@ class MainWindow(QMainWindow):
 
             self.tableWidget.setItem(row_position, 0, QTableWidgetItem(str(order.id)))
             self.tableWidget.setItem(row_position, 1, QTableWidgetItem(dishes))
-            self.tableWidget.setItem(row_position, 2, QTableWidgetItem(str(total_cost)))
+            self.tableWidget.setItem(row_position, 2, QTableWidgetItem(str(format(stem(total_cost)))))
 
             is_completed_checkbox = QCheckBox()
             is_completed_checkbox.setChecked(order.is_completed)
@@ -174,6 +174,17 @@ class MainWindow(QMainWindow):
             self.tableWidget.setItem(row_position, 5, QTableWidgetItem(order.waiter.username))
             self.tableWidget.setItem(row_position, 6, QTableWidgetItem(str(order.table.table_number)))
             self.tableWidget.setItem(row_position, 7, QTableWidgetItem(order.order_date.strftime("%Y-%m-%d %H:%M:%S")))
+
+        self.tableWidget.resizeColumnsToContents()
+        self.window_size()
+
+
+    def window_size(self):
+        table_width = self.tableWidget.horizontalHeader().length() + self.tableWidget.verticalScrollBar().width()
+        width = table_width + 20
+        self.setMinimumSize(width, self.minimumHeight()) 
+        self.resize(width, self.height())
+
 
     def open_add_order_window(self):
         self.add_order_window = AddOrderWindow(self.current_waiter, self.load_orders)
